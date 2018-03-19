@@ -1,2 +1,2 @@
 # tools
-command line tools
+command line tools for Windows

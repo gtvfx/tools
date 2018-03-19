@@ -1,1 +1,1 @@
-call normpath
+call normpath --force

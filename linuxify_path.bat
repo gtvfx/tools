@@ -1,2 +1,2 @@
 @echo off
-call normpath --unix
+call normpath --unix --force

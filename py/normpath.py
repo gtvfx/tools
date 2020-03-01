@@ -1,4 +1,4 @@
-__doc__ = ''' This is a class for normalizing a path to either
+__doc__ = """ This is a class for normalizing a path to either
 Windows or Unix.
 
 You can supply a path yourself or it will use the text in your
@@ -6,8 +6,8 @@ Windows clipboard.
 
 This uses the click framework to create a command line utility
 
-Args:
-    --path (str)
+Argumentss:
+    --path (str):
         * The path to normalize
         * If not supplied the tool grabs the string from the 
         Windwows clipboard
@@ -19,18 +19,25 @@ Flags:
     --force
         * skips path validation and simply normalizes the slash characters
 
-'''
-
-
+"""
 
 import os
 import win32clipboard
-
 import click
 
 
 class NormPath(object):
-    
+    """Normalizes the os.separator character in the clipboard string
+
+    see module __doc__ for command line usage.
+
+    Arguments;
+        path (str)
+        force (bool, optional): if true will skip path validation and 
+            simply normalizes the clipboard string.
+        uxix (bool, optional): if true will normalize the path as a Unix path
+
+    """
     def __init__(self, path, force=None, unix=None):
         super(NormPath, self).__init__()
 
@@ -39,8 +46,15 @@ class NormPath(object):
         self.unix = unix
 
     def validate_path(self, path):
-        ''' Attempts to validate the inputed string as a path '''
+        """Attempts to validate the inputed string as a path
+        
+        Arguments:
+            path (str)
 
+        Returns:
+            (bool): True if supplied path is valid
+        
+        """
         if self.force:
             return True
 
@@ -55,18 +69,21 @@ class NormPath(object):
         return out
 
     def get_clipboard(self):
-        ''' Returns the clipboard string
+        """Returns the clipboard string
 
         if not self.force:
             attempts to validate the clipboard text as a path
 
         Will remove double quatations from the string
         
-        returns:
+        Returns:
             (str)
 
-        '''
+        Raises:
+            (ValueError): if the clipboard string fails the 
+                validate_path method.
 
+        """
         win32clipboard.OpenClipboard()
         data = win32clipboard.GetClipboardData()
         win32clipboard.CloseClipboard()
@@ -79,60 +96,66 @@ class NormPath(object):
         return data
 
     def set_clipboard(self, path):
-        '''Sets the Windows clipboard text to the inputed path string
+        """Sets the Windows clipboard text to the inputed path string
 
-        Args:
+        Arguments:
             path (str)
 
-        returns:
+        Returns:
             (void)
 
-        '''
-
+        """
         win32clipboard.OpenClipboard()
         win32clipboard.EmptyClipboard()
         win32clipboard.SetClipboardText(path)
         win32clipboard.CloseClipboard()
 
     def windowsify(self):
-        ''' normalizes the value in self.path to Windows 
+        """Normalizes the value in self.path to Windows 
         
         Sets the Windows clipboard text to the normalized string
 
-        returns:
+        Returns:
             (str)
 
-        '''
-
+        """
         path = self.path or self.get_clipboard()
         nText = path.replace('/','\\')
         self.set_clipboard(nText)
         return nText
 
     def linuxify(self, path=None):
-        ''' normalizes the value in self.path to Unix 
+        """Normalizes the value in self.path to Unix 
         
         Sets the Windows clipboard text to the normalized string
 
-        returns:
-            (str)
-            
-        '''
+        Arguments:
+            path (str, optional): If unsupplied will call self.get_clipboard()
 
+        Returns:
+            (str)
+
+        See also:
+            self.get_clipboard
+            self.set_clipboard
+            
+        """
         path = self.path or self.get_clipboard()
         nText = path.replace('\\','/')
         self.set_clipboard(nText)
         return nText
 
     def _execute(self):
-        '''Main logic
+        """Main logic
+
+        Returns:
+            (void)
 
         See Also:
             linuxify()
             windowsify()
 
-        '''
-
+        """
         if self.unix:
             self.linuxify()
         else:
@@ -145,11 +168,11 @@ class NormPath(object):
 @click.option('--force', is_flag=True)
 @click.option('--path', default=None)
 def main(path, force, unix):
-    '''
-    '''
+    """This is the main logic executed by the tool"""
     normPath = NormPath(path, force, unix)
     normPath._execute()
 
 
 if __name__ == "__main__":
    main()
+   

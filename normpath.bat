@@ -1,2 +1,2 @@
 @echo off
-python %~dp0py\normpath.py %*
+call python %~dp0py\normpath.py %*

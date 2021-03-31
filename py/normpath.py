@@ -45,6 +45,15 @@ class NormPath(object):
         self.force = force
         self.unix = unix
 
+    @property
+    def path(self):
+        """(str): Path to operate on"""
+        return self._path or self.get_clipboard()
+
+    @path.setter
+    def path(self, path):
+        self._path = path
+
     def validate_path(self, path):
         """Attempts to validate the inputed string as a path
         
@@ -110,7 +119,7 @@ class NormPath(object):
         win32clipboard.SetClipboardText(path)
         win32clipboard.CloseClipboard()
 
-    def windowsify(self):
+    def to_windows(self):
         """Normalizes the value in self.path to Windows 
         
         Sets the Windows clipboard text to the normalized string
@@ -119,12 +128,11 @@ class NormPath(object):
             (str)
 
         """
-        path = self.path or self.get_clipboard()
-        nText = path.replace('/','\\')
+        nText = self.path.replace('/','\\')
         self.set_clipboard(nText)
         return nText
 
-    def linuxify(self, path=None):
+    def to_unix(self, path=None):
         """Normalizes the value in self.path to Unix 
         
         Sets the Windows clipboard text to the normalized string
@@ -140,8 +148,7 @@ class NormPath(object):
             self.set_clipboard
             
         """
-        path = self.path or self.get_clipboard()
-        nText = path.replace('\\','/')
+        nText = self.path.replace('\\','/')
         self.set_clipboard(nText)
         return nText
 
@@ -152,14 +159,14 @@ class NormPath(object):
             (void)
 
         See Also:
-            linuxify()
-            windowsify()
+            to_unix()
+            to_windows()
 
         """
         if self.unix:
-            self.linuxify()
+            self.to_unix()
         else:
-            self.windowsify()
+            self.to_windows()
 
 
 

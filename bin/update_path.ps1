@@ -36,9 +36,17 @@ if (-not [string]::IsNullOrEmpty($currentPath)) {
     $currentPath.Split(';') | ForEach-Object {
         $path = $_.Trim()
         if (-not [string]::IsNullOrEmpty($path)) {
-            # Normalize path for comparison
-            $normalizedPath = [System.IO.Path]::GetFullPath($path).TrimEnd('\')
-            $existingPaths[$normalizedPath] = $true
+            try {
+                # Normalize path for comparison
+                $normalizedPath = [System.IO.Path]::GetFullPath($path).TrimEnd('\\')
+                $existingPaths[$normalizedPath] = $true
+            }
+            catch {
+                # Skip invalid paths
+                if ($Verbose) {
+                    Write-Host "  [Skipping invalid path: $path]" -ForegroundColor DarkGray
+                }
+            }
         }
     }
 }
@@ -54,7 +62,8 @@ if ($Verbose) {
 # Find all git repositories (directories containing .git)
 Write-Host ""
 Write-Host "Searching for git repositories..." -ForegroundColor Cyan
-$gitRepos = Get-ChildItem -Path $WorkspaceRoot -Directory -Recurse -ErrorAction SilentlyContinue | 
+# Limit depth to avoid performance issues on network drives
+$gitRepos = Get-ChildItem -Path $WorkspaceRoot -Directory -Depth 2 -ErrorAction SilentlyContinue | 
     Where-Object { Test-Path (Join-Path $_.FullName ".git") }
 
 if ($gitRepos.Count -eq 0) {

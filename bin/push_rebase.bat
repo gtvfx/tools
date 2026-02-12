@@ -1,10 +1,4 @@
-::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-:: THIS CODE IS PROPRIETARY PROPERTY OF BLIZZARD ENTERTAINMENT, INC.
-:: The contents of this file may not be disclosed, copied or duplicated in any
-:: form, in whole or in part, without the prior written permission of
-:: Blizzard Entertainment, Inc.
-::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-:: Pushes changes to origin in a way that keeps the network graph clean
+@REM Pushes changes to origin in a way that keeps the network graph clean
 @echo off
 
 if "%1" == "--help" (

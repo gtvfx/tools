@@ -1,8 +1,4 @@
-"""Prints a '{key} = {value}' formatted string for each item
-in os.environ
-
-"""
-from __future__ import print_function
+"""Prints a '{key} = {value}' formatted string for each item in os.environ."""
 
 import os
 

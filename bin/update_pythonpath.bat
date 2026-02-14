@@ -2,6 +2,12 @@
 REM Update PYTHONPATH with py directories from git repositories
 REM This batch file runs the PowerShell script and updates the current session
 
+REM Check for help flag using centralized function
+call %~dp0func.cmd :check_help_flag "%~1" && goto :SHOW_HELP
+
+
+@REM :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
 setlocal enabledelayedexpansion
 
 REM Get the directory where this batch file is located
@@ -80,3 +86,39 @@ if %ERRORLEVEL% EQU 0 (
     endlocal
     exit /b 1
 )
+
+goto :end
+
+@REM :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+
+:SHOW_HELP
+echo Usage: update_pythonpath [^<workspaceRoot^>] [permanent] [verbose]
+echo.
+echo Options:
+echo   permanent   - Update user PYTHONPATH permanently ^(User-level^)
+echo   verbose     - Show extra debug output
+echo   -h, --help  - Show this help message
+echo.
+echo Examples:
+echo   update_pythonpath
+echo   update_pythonpath permanent
+echo   update_pythonpath R:\repo permanent verbose
+echo.
+echo This script updates the PYTHONPATH environment variable by scanning for 'py'
+echo directories in git repositories.
+echo It runs a PowerShell script to perform the update and then reloads the PYTHONPATH
+echo variable in the current session to reflect the changes immediately.
+echo.
+echo If 'permanent' is specified, the PYTHONPATH will be updated permanently at
+echo the user level. If a workspace root is provided, it will look for git
+echo repositories under that path.
+echo.
+echo The 'verbose' flag will show additional debug output during the process.
+echo.
+goto :eof
+
+
+:end
+@REM Pause if env var set
+call %~dp0func :debug

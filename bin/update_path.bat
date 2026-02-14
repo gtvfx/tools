@@ -1,6 +1,10 @@
 @echo off
-REM Update PATH with bin directories from git repositories
-REM This batch file runs the PowerShell script and updates the current session
+
+REM Check for help flag using centralized function
+call %~dp0func.cmd :check_help_flag "%~1" && goto :SHOW_HELP
+
+
+@REM :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 setlocal enabledelayedexpansion
 
@@ -10,28 +14,7 @@ set "SCRIPT_DIR=%~dp0"
 REM Run PowerShell script and capture output
 REM Map friendly args to PowerShell switches and quote workspace paths for PowerShell
 set "PS_ARGS="
-REM Check for help flags anywhere in args
-set "SHOW_HELP=0"
-for %%A in (%*) do (
-    if /I "%%~A"=="-h" set "SHOW_HELP=1"
-    if /I "%%~A"=="--help" set "SHOW_HELP=1"
-    if /I "%%~A"=="help" set "SHOW_HELP=1"
-    if /I "%%~A"=="?" set "SHOW_HELP=1"
-)
-if "%SHOW_HELP%"=="1" (
-    echo Usage: update_path [^<workspaceRoot^>] [permanent] [verbose]
-    echo.
-    echo Options:
-    echo   permanent   - Update user PATH permanently ^(User-level^)
-    echo   verbose     - Show extra debug output
-    echo   -h, --help  - Show this help message
-    echo.
-    echo Examples:
-    echo   update_path
-    echo   update_path permanent
-    echo   update_path R:\repo permanent verbose
-    exit /b 0
-)
+
 if "%~1"=="" (
     REM no args provided
 ) else (
@@ -80,3 +63,42 @@ if %ERRORLEVEL% EQU 0 (
     endlocal
     exit /b 1
 )
+
+goto :end
+
+@REM :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+
+:SHOW_HELP
+echo Usage: update_path [^<workspaceRoot^>] [permanent] [verbose]
+echo.
+echo Options:
+echo   permanent   - Update user PATH permanently ^(User-level^)
+echo   verbose     - Show extra debug output
+echo   -h, --help  - Show this help message
+echo.
+echo Examples:
+echo   update_path
+echo   update_path permanent
+echo   update_path R:\repo permanent verbose
+echo.
+echo This script updates the PATH environment variable with bin directories from 
+echo git repositories. If a workspace root is provided, it will look for git 
+echo repositories under that root. Otherwise, it will use the current directory 
+echo as the root.
+echo.
+echo By default, it updates the PATH for the current session only.
+echo it will use the current directory as the root.
+echo.
+echo By default, it updates the PATH for the current session only.
+echo Use the 'permanent' flag to also update the user PATH persistently (User-level).
+echo This does not affect the system PATH and does not require admin rights.
+echo The 'verbose' flag can be used to show additional debug output from the 
+echo PowerShell script about which directories are being added to the PATH.
+echo.
+goto :eof
+
+
+:end
+@REM Pause if env var set
+call %~dp0func.cmd :debug

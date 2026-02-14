@@ -1,12 +1,13 @@
 @echo off
-setlocal enabledelayedexpansion
 
-REM Check if repository URL was provided
-if "%~1"=="" (
-    echo Usage: clone.bat ^<repository-url^>
-    echo Example: clone.bat https://github.com/user/gt-pythonlibs.git
-    exit /b 1
-)
+
+REM Check for help flag using centralized function
+call %~dp0func.cmd :check_help_flag "%~1" && goto :SHOW_HELP
+
+
+@REM :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+setlocal enabledelayedexpansion
 
 set "REPO_URL=%~1"
 
@@ -47,3 +48,26 @@ if %errorlevel% equ 0 (
 )
 
 endlocal
+
+goto :end
+
+@REM :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+
+:SHOW_HELP
+echo Usage: clone ^<repository-url^>
+echo.
+echo Example: clone https://github.com/user/gt-pythonlibs.git
+echo.
+echo This script clones a git repository into a directory structure based on the
+echo organization and repository name. With repository name split into 
+echo subdirectories by hyphens.
+echo For example, a repository named "gt-pythonlibs" under the "user" organization
+echo will be cloned into "user\gt\pythonlibs\".
+echo.
+goto :eof
+
+
+:end
+@REM Pause if env var set
+call %~dp0func :debug

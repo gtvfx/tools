@@ -9,6 +9,19 @@ call %~dp0func.cmd :check_help_flag "%~1" && goto :SHOW_HELP
 
 setlocal enabledelayedexpansion
 
+REM Check if DEV_PATH environment variable is set
+if not defined DEV_PATH (
+    echo Error: DEV_PATH environment variable is not set.
+    echo Please set DEV_PATH to your development root directory.
+    exit /b 1
+)
+
+REM Change to DEV_PATH directory
+cd /d "%DEV_PATH%" || (
+    echo Error: Cannot change to DEV_PATH directory: %DEV_PATH%
+    exit /b 1
+)
+
 set "REPO_URL=%~1"
 
 REM Extract the organization and repository name from the URL
@@ -41,7 +54,7 @@ echo Cloning !REPO_NAME! from !ORG! into !DIR_PATH!...
 git clone "%REPO_URL%" "!DIR_PATH!"
 
 if %errorlevel% equ 0 (
-    echo Successfully cloned to !DIR_PATH!
+    echo Successfully cloned to %DEV_PATH%\!DIR_PATH!
 ) else (
     echo Failed to clone repository
     exit /b 1
@@ -62,8 +75,14 @@ echo.
 echo This script clones a git repository into a directory structure based on the
 echo organization and repository name. With repository name split into 
 echo subdirectories by hyphens.
+echo.
+echo The repository will be cloned into the directory specified by the DEV_PATH
+echo environment variable.
 echo For example, a repository named "gt-pythonlibs" under the "user" organization
-echo will be cloned into "user\gt\pythonlibs\".
+echo will be cloned into "%%DEV_PATH%%\user\gt\pythonlibs\".
+echo.
+echo Requirements:
+echo   - DEV_PATH environment variable must be set
 echo.
 goto :eof
 

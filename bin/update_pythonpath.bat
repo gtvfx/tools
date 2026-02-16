@@ -16,28 +16,7 @@ set "SCRIPT_DIR=%~dp0"
 REM Run PowerShell script and capture output
 REM Map friendly args to PowerShell switches and quote workspace paths for PowerShell
 set "PS_ARGS="
-REM Check for help flags anywhere in args
-set "SHOW_HELP=0"
-for %%A in (%*) do (
-    if /I "%%~A"=="-h" set "SHOW_HELP=1"
-    if /I "%%~A"=="--help" set "SHOW_HELP=1"
-    if /I "%%~A"=="help" set "SHOW_HELP=1"
-    if /I "%%~A"=="?" set "SHOW_HELP=1"
-)
-if "%SHOW_HELP%"=="1" (
-    echo Usage: update_pythonpath [^<workspaceRoot^>] [permanent] [verbose]
-    echo.
-    echo Options:
-    echo   permanent   - Update user PYTHONPATH permanently ^(User-level^)
-    echo   verbose     - Show extra debug output
-    echo   -h, --help  - Show this help message
-    echo.
-    echo Examples:
-    echo   update_pythonpath
-    echo   update_pythonpath permanent
-    echo   update_pythonpath R:\repo permanent verbose
-    exit /b 0
-)
+
 if "%~1"=="" (
     REM no args provided
 ) else (

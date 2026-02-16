@@ -21,7 +21,7 @@ echo This script stops the Killer Analytics and Network services.
 echo Often necessary to stop these services before running certain network-related 
 echo tools or scripts.
 echo.
-echo I create a Windows Task to run this script at startup to ensure these 
+echo I create a Scheduled Task to run this script at startup to ensure these 
 echo services are stopped when I log in.
 echo.
 goto :eof
